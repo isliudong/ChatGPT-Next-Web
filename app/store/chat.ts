@@ -328,7 +328,10 @@ export const useChatStore = createPersistStore(
               botMessage.content = message;
             }
             get().updateCurrentSession((session) => {
-              session.messages = session.messages.concat();
+              //延迟更新，防止出现闪烁
+              setTimeout(() => {
+                session.messages = session.messages.concat();
+              }, 200);
             });
           },
           onFinish(message) {
