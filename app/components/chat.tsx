@@ -1127,7 +1127,8 @@ function _Chat() {
           setAutoScroll(false);
         }}
       >
-        {messages.map((message, i) => {
+        {/*不显示系统指令消息*/}
+        {messages.filter(m=>m.role!='system').map((message, i) => {
           const isUser = message.role === "user";
           const isContext = i < context.length;
           const showActions =
