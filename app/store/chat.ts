@@ -19,6 +19,7 @@ import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
+import {MessageQueueManager} from "@/app/store/MessageQueueManager";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -63,6 +64,10 @@ export const BOT_HELLO: ChatMessage = createMessage({
   role: "assistant",
   content: Locale.Store.BotHello,
 });
+
+
+// 创建一个全局队列管理器实例
+const messageQueueManager = new MessageQueueManager();
 
 function createEmptySession(): ChatSession {
   return {
@@ -327,12 +332,12 @@ export const useChatStore = createPersistStore(
             if (message) {
               botMessage.content = message;
             }
-            get().updateCurrentSession((session) => {
-              //延迟更新，防止出现闪烁
-              setTimeout(() => {
+            messageQueueManager.enqueue(()=>{
+              get().updateCurrentSession((session) => {
                 session.messages = session.messages.concat();
-              }, 200);
-            });
+              });
+            })
+
           },
           onFinish(message) {
             botMessage.streaming = false;
