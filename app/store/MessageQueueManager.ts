@@ -1,11 +1,12 @@
 export class MessageQueueManager {
     private queue: Promise<void>;
     private lastHandledTime: number;
-    private delayTime = 3; // 每10ms处理一条消息
+    private readonly delayTime:number; // 每10ms处理一条消息
 
-    constructor() {
+    constructor(delayTime: number = 10) {
         this.queue = Promise.resolve();
         this.lastHandledTime = Date.now(); // 初始化上一次处理时间为当前时间
+        this.delayTime = delayTime;
     }
     // 添加消息到队列中并确保它们按顺序处理
     enqueue(messageHandler: () => void) {

@@ -19,7 +19,6 @@ import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
-import {MessageQueueManager} from "@/app/store/MessageQueueManager";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -66,8 +65,6 @@ export const BOT_HELLO: ChatMessage = createMessage({
 });
 
 
-// 创建一个全局队列管理器实例
-const messageQueueManager = new MessageQueueManager();
 
 function createEmptySession(): ChatSession {
   return {
@@ -332,10 +329,8 @@ export const useChatStore = createPersistStore(
             if (message) {
               botMessage.content = message;
             }
-            messageQueueManager.enqueue(()=>{
-              get().updateCurrentSession((session) => {
-                session.messages = session.messages.concat();
-              });
+            get().updateCurrentSession((session) => {
+              session.messages = session.messages.concat();
             })
 
           },
