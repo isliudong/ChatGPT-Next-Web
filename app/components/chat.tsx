@@ -328,7 +328,7 @@ function ClearContextDivider() {
 
 function ChatAction(props: {
   text: string;
-  icon: JSX.Element;
+  icon: React.JSX.Element;
   onClick: () => void;
 }) {
   const iconRef = useRef<HTMLDivElement>(null);
@@ -337,7 +337,6 @@ function ChatAction(props: {
     full: 16,
     icon: 16,
   });
-
   function updateWidth() {
     if (!iconRef.current || !textRef.current) return;
     const getWidth = (dom: HTMLDivElement) => dom.getBoundingClientRect().width;
@@ -345,9 +344,13 @@ function ChatAction(props: {
     const iconWidth = getWidth(iconRef.current);
     setWidth({
       full: textWidth + iconWidth,
-      icon: iconWidth,
+      icon: textWidth + iconWidth,
     });
   }
+
+  useEffect(() => {
+    updateWidth()
+  }, []);
 
   return (
     <div
@@ -475,7 +478,7 @@ export function ChatActions(props: {
         />
       )}
 
-      <ChatAction
+      {/*<ChatAction
         onClick={nextTheme}
         text={Locale.Chat.InputActions.Theme[theme]}
         icon={
@@ -489,7 +492,7 @@ export function ChatActions(props: {
             ) : null}
           </>
         }
-      />
+      />*/}
 
       <ChatAction
         onClick={props.showPromptHints}
@@ -497,13 +500,13 @@ export function ChatActions(props: {
         icon={<PromptIcon />}
       />
 
-      <ChatAction
+      {/*<ChatAction
         onClick={() => {
           navigate(Path.Masks);
         }}
         text={Locale.Chat.InputActions.Masks}
         icon={<MaskIcon />}
-      />
+      />*/}
 
       <ChatAction
         text={Locale.Chat.InputActions.Clear}
@@ -520,11 +523,11 @@ export function ChatActions(props: {
         }}
       />
 
-      <ChatAction
+      {/*<ChatAction
         onClick={() => setShowModelSelector(true)}
         text={currentModel}
         icon={<RobotIcon />}
-      />
+      />*/}
 
       {showModelSelector && (
         <Selector
