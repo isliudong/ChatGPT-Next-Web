@@ -72,6 +72,10 @@ const ko: PartialLocaleType = {
       Title: "글꼴 크기",
       SubTitle: "채팅 내용의 글꼴 크기 조정",
     },
+    MessageDelay: {
+      Title: "메시지 지연",
+      SubTitle: "메시지 전송 후 지연 시간",
+    },
     InjectSystemPrompts: {
       Title: "시스템 프롬프트 주입",
       SubTitle:

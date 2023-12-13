@@ -71,6 +71,10 @@ const tr: PartialLocaleType = {
       Title: "Yazı Boyutu",
       SubTitle: "Sohbet içeriğinin yazı boyutunu ayarlayın",
     },
+    MessageDelay: {
+      Title: "Mesaj Gecikmesi",
+      SubTitle: "Mesaj gönderdikten sonra gecikme",
+    },
     InjectSystemPrompts: {
       Title: "Sistem İpucu Ekleyin",
       SubTitle:

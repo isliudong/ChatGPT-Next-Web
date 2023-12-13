@@ -71,6 +71,10 @@ const es: PartialLocaleType = {
       Title: "Tamaño de fuente",
       SubTitle: "Ajustar el tamaño de fuente del contenido del chat",
     },
+    MessageDelay: {
+      Title: "Retraso de mensaje",
+      SubTitle: "Retrasar el mensaje para aumentar el valor de la puntuación",
+    },
     InjectSystemPrompts: {
       Title: "Inyectar Prompts del Sistema",
       SubTitle:

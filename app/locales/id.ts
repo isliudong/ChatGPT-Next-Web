@@ -140,6 +140,10 @@ const id: PartialLocaleType = {
       Title: "Ukuran Font",
       SubTitle: "Ubah ukuran font konten chat",
     },
+    MessageDelay: {
+      Title: "Tunda Pesan",
+      SubTitle: "Tunda pesan untuk pengalaman yang lebih realistis",
+    },
     InjectSystemPrompts: {
       Title: "Suntikkan Petunjuk Sistem",
       SubTitle:
@@ -370,7 +374,7 @@ const id: PartialLocaleType = {
   Exporter: {
     Description: {
       Title: "Hanya pesan setelah menghapus konteks yang akan ditampilkan"
-    },  
+    },
     Model: "Model",
     Messages: "Pesan",
     Topic: "Topik",

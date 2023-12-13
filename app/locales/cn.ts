@@ -151,6 +151,10 @@ const cn = {
       Title: "字体大小",
       SubTitle: "聊天内容的字体大小",
     },
+    MessageDelay: {
+      Title: "消息延迟",
+      SubTitle: "延迟内容加载速度（流消息响应过快） 优化阅读体验",
+    },
     InjectSystemPrompts: {
       Title: "注入系统级提示信息",
       SubTitle: "强制给每次请求的消息列表开头添加一个模拟 ChatGPT 的系统提示",

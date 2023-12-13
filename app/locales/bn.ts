@@ -136,6 +136,10 @@ const bn: PartialLocaleType = {
       Title: "ফন্ট সাইজ",
       SubTitle: "চ্যাট সামগ্রীর ফন্ট সাইজ সংশোধন করুন",
     },
+    MessageDelay: {
+      Title: "বার্তা বিলম্ব",
+      SubTitle: "বার্তা বিলম্ব করে আরতি মান বেশি করুন",
+    },
     InjectSystemPrompts: {
       Title: "حقن تلميحات النظام",
       SubTitle:

@@ -71,6 +71,10 @@ const de: PartialLocaleType = {
       Title: "Schriftgröße",
       SubTitle: "Schriftgröße des Chat-Inhalts anpassen",
     },
+    MessageDelay: {
+      Title: "Nachrichtenverzögerung",
+      SubTitle: "Verzögern Sie die Nachrichten, um die Arität zu erhöhen",
+    },
     InjectSystemPrompts: {
       Title: "System-Prompts einfügen",
       SubTitle:

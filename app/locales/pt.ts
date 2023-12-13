@@ -153,6 +153,10 @@ const pt: PartialLocaleType = {
       Title: "Tamanho da Fonte",
       SubTitle: "Ajustar o tamanho da fonte do conteúdo do chat",
     },
+    MessageDelay: {
+      Title: "Atraso da Mensagem",
+      SubTitle: "Atrasar a exibição da mensagem para aumentar o valor da pontuação",
+    },
     InjectSystemPrompts: {
       Title: "Inserir Prompts de Sistema",
       SubTitle: "Inserir um prompt de sistema global para cada requisição",

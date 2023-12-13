@@ -71,6 +71,10 @@ const vi: PartialLocaleType = {
       Title: "Font chữ",
       SubTitle: "Thay đổi font chữ của nội dung trò chuyện",
     },
+    MessageDelay: {
+      Title: "Độ trễ tin nhắn",
+      SubTitle: "Độ trễ sau khi gửi tin nhắn",
+    },
     InjectSystemPrompts: {
       Title: "Tiêm Prompt Hệ thống",
       SubTitle:

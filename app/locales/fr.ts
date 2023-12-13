@@ -111,6 +111,10 @@ const fr: PartialLocaleType = {
       Title: "Taille des polices",
       SubTitle: "Ajuste la taille de police du contenu de la conversation",
     },
+    MessageDelay: {
+      Title: "Délai de message",
+      SubTitle: "Retarder le message pour augmenter la valeur de score",
+    },
     InjectSystemPrompts: {
       Title: "Injecter des invites système",
       SubTitle:

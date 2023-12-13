@@ -71,6 +71,10 @@ const it: PartialLocaleType = {
       Title: "Dimensione carattere",
       SubTitle: "Regolare la dimensione dei caratteri del contenuto della chat",
     },
+    MessageDelay: {
+      Title: "Ritardo del messaggio",
+      SubTitle: "Ritardo di visualizzazione del messaggio",
+    },
     InjectSystemPrompts: {
       Title: "Inserisci Prompts di Sistema",
       SubTitle:

@@ -69,6 +69,10 @@ const tw: PartialLocaleType = {
       Title: "字型大小",
       SubTitle: "聊天內容的字型大小",
     },
+    MessageDelay: {
+      Title: "延遲時間",
+      SubTitle: "每則訊息的延遲時間",
+    },
     InjectSystemPrompts: {
       Title: "匯入系統提示",
       SubTitle: "強制在每個請求的訊息列表開頭新增一個模擬 ChatGPT 的系統提示",

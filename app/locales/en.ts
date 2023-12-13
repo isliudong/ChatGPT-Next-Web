@@ -153,6 +153,10 @@ const en: LocaleType = {
       Title: "Font Size",
       SubTitle: "Adjust font size of chat content",
     },
+    MessageDelay: {
+      Title: "Message Delay",
+      SubTitle: "Delay message to get a more realistic experience",
+    },
     InjectSystemPrompts: {
       Title: "Inject System Prompts",
       SubTitle: "Inject a global system prompt for every request",

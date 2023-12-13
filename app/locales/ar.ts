@@ -111,6 +111,10 @@ const ar: PartialLocaleType = {
       Title: "حجم الخط",
       SubTitle: "ضبط حجم الخط لمحتوى الدردشة",
     },
+    MessageDelay: {
+      Title: "تأخير الرسالة",
+      SubTitle: "تأخير الرسالة للحصول على تجربة أكثر واقعية",
+    },
     InjectSystemPrompts: {
       Title: "حقن تلميحات النظام",
       SubTitle:

@@ -120,7 +120,7 @@ export class ChatGPTApi implements LLMApi {
         let responseText = "";
         let remainText = "";
         let finished = false;
-        const messageQueueManager = new MessageQueueManager(30);
+        const messageQueueManager = new MessageQueueManager(useAppConfig.getState().messageDelay);
 
 
         // animate response to make it looks smooth

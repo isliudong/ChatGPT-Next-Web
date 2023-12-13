@@ -71,6 +71,10 @@ const ru: PartialLocaleType = {
       Title: "Размер шрифта",
       SubTitle: "Настроить размер шрифта контента чата",
     },
+    MessageDelay: {
+      Title: "Задержка сообщения",
+      SubTitle: "Задержка после отправки сообщения",
+    },
     InjectSystemPrompts: {
       Title: "Вставить системные подсказки",
       SubTitle:

@@ -66,6 +66,10 @@ const no: PartialLocaleType = {
       Title: "Fontstørrelsen",
       SubTitle: "Juster fontstørrelsen for samtaleinnholdet.",
     },
+    MessageDelay: {
+      Title: "Meldingsforsinkelse",
+      SubTitle: "Forsinkelse i millisekunder for å sende hver melding",
+    },
     InjectSystemPrompts: {
       Title: "Sett inn systemprompter",
       SubTitle:

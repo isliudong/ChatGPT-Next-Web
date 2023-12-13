@@ -118,6 +118,10 @@ const jp: PartialLocaleType = {
       Title: "フォントサイズ",
       SubTitle: "チャット内容のフォントサイズ",
     },
+    MessageDelay: {
+      Title: "メッセージ遅延",
+      SubTitle: "メッセージの表示を遅らせてスコアを上げる",
+    },
     InjectSystemPrompts: {
       Title: "システムプロンプトの挿入",
       SubTitle:

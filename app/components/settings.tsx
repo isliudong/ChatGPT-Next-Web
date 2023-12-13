@@ -795,6 +795,25 @@ export function Settings() {
           </ListItem>
 
           <ListItem
+            title={Locale.Settings.MessageDelay.Title}
+            subTitle={Locale.Settings.MessageDelay.SubTitle}
+          >
+            <InputRange
+              title={`${config.messageDelay ?? 14}ms`}
+              value={config.messageDelay}
+              min="0"
+              max="100"
+              step="1"
+              onChange={(e) =>
+                updateConfig(
+                  (config) =>
+                    (config.messageDelay = Number.parseInt(e.currentTarget.value)),
+                )
+              }
+            ></InputRange>
+          </ListItem>
+
+          <ListItem
             title={Locale.Settings.AutoGenerateTitle.Title}
             subTitle={Locale.Settings.AutoGenerateTitle.SubTitle}
           >
