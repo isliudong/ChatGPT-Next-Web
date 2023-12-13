@@ -776,6 +776,21 @@ function _Chat() {
       e.preventDefault();
       return;
     }
+    /*兼容 ctrl+enter 换行*/
+    if (e.key === "Enter" && e.ctrlKey) {
+      const inputDom = inputRef.current;
+      if (inputDom) {
+        const start = inputDom.selectionStart;
+        const end = inputDom.selectionEnd;
+        const value = inputDom.value;
+        inputDom.value = value.substring(0, start) + "\n" + value.substring(end, value.length);
+        inputDom.selectionStart = inputDom.selectionEnd = start + 1;
+        setUserInput(inputDom.value);
+      }
+      e.preventDefault();
+      return;
+    }
+
     if (shouldSubmit(e) && promptHints.length === 0) {
       doSubmit(userInput);
       e.preventDefault();
