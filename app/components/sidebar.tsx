@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 
 import styles from "./home.module.scss";
 
@@ -15,7 +15,7 @@ import DragIcon from "../icons/drag.svg";
 
 import Locale from "../locales";
 
-import { useAppConfig, useChatStore } from "../store";
+import { useAppConfig, useChatStore, useUserStore } from "../store";
 
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -30,6 +30,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { isIOS, useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
 import { showConfirm, showToast } from "./ui-lib";
+import LoginModal from "@/app/components/login/LoginModal";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
   loading: () => null,
@@ -141,7 +142,22 @@ export function SideBar(props: { className?: string }) {
     [isMobileScreen],
   );
 
+  const userStore = useUserStore();
+
   useHotKey();
+
+  // 添加状态来控制登录弹窗的显示
+  const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
+
+  // 切换登录弹窗的显示状态
+  const toggleLoginModal = () => {
+    setIsLoginModalVisible(!isLoginModalVisible);
+  };
+
+  // 关闭登录弹窗
+  const closeLoginModal = () => {
+    setIsLoginModalVisible(false);
+  };
 
   return (
     <div
@@ -180,12 +196,19 @@ export function SideBar(props: { className?: string }) {
           shadow
         />
         <IconButton
-          icon={<PluginIcon />}
-          text={shouldNarrow ? undefined : Locale.Plugin.Name}
+          icon={<ChatGptIcon />}
+          text={
+            shouldNarrow
+              ? undefined
+              : userStore.isLogin()
+              ? userStore.username
+              : "登陆以同步"
+          }
           className={styles["sidebar-bar-button"]}
-          onClick={() => showToast(Locale.WIP)}
+          onClick={toggleLoginModal} // 添加点击事件处理函数来显示登录弹窗
           shadow
         />
+        <LoginModal isVisible={isLoginModalVisible} onClose={closeLoginModal} />
       </div>
 
       <div

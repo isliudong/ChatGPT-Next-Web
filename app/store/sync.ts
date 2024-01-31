@@ -14,6 +14,7 @@ import { showToast } from "../components/ui-lib";
 import Locale from "../locales";
 import { createSyncClient, ProviderType } from "../utils/cloud";
 import { corsPath } from "../utils/cors";
+import { useUserStore } from "@/app/store/useUserStore";
 
 export interface WebDavConfig {
   server: string;
@@ -25,7 +26,7 @@ const isApp = !!getClientConfig()?.isApp;
 export type SyncStore = GetStoreState<typeof useSyncStore>;
 
 const DEFAULT_SYNC_STATE = {
-  provider: ProviderType.WebDAV,
+  provider: ProviderType.ServerStash,
   useProxy: true,
   proxyUrl: corsPath(ApiPath.Cors),
 
@@ -41,6 +42,12 @@ const DEFAULT_SYNC_STATE = {
     apiKey: "",
   },
 
+  serverstash: {
+    endpoint: "/server/chat-user-datas",
+    username: STORAGE_KEY,
+    apiKey: "",
+  },
+
   lastSyncTime: 0,
   lastProvider: "",
 };
@@ -50,6 +57,7 @@ export const useSyncStore = createPersistStore(
   (set, get) => ({
     cloudSync() {
       const config = get()[get().provider];
+      console.log(config);
       return Object.values(config).every((c) => c.toString().length > 0);
     },
 

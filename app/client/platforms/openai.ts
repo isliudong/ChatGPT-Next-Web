@@ -17,7 +17,7 @@ import {
 import { prettyObject } from "@/app/utils/format";
 import { getClientConfig } from "@/app/config/client";
 import { makeAzurePath } from "@/app/azure";
-import {MessageQueueManager} from "@/app/store/MessageQueueManager";
+import { MessageQueueManager } from "@/app/store/MessageQueueManager";
 
 export interface OpenAIListModelResponse {
   object: string;
@@ -120,8 +120,9 @@ export class ChatGPTApi implements LLMApi {
         let responseText = "";
         let remainText = "";
         let finished = false;
-        const messageQueueManager = new MessageQueueManager(useAppConfig.getState().messageDelay);
-
+        const messageQueueManager = new MessageQueueManager(
+          useAppConfig.getState().messageDelay,
+        );
 
         // animate response to make it looks smooth
         function animateResponseText() {
@@ -147,10 +148,10 @@ export class ChatGPTApi implements LLMApi {
 
         const finish = () => {
           if (!finished) {
-            messageQueueManager.enqueue(()=>{
+            messageQueueManager.enqueue(() => {
               finished = true;
               options.onFinish(responseText + remainText);
-            })
+            });
           }
         };
 

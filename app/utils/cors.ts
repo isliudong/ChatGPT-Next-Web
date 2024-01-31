@@ -22,6 +22,7 @@ export function corsFetch(
   },
 ) {
   if (!url.startsWith("http")) {
+    console.log("[CORS Fetch] url = ", url);
     throw Error("[CORS Fetch] url must starts with http/https");
   }
 

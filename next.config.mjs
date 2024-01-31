@@ -76,6 +76,10 @@ if (mode !== "export") {
         source: "/sharegpt",
         destination: "https://sharegpt.com/api/conversations",
       },
+      {
+        source: "/server/:path*",
+        destination: "https://panghucm.fun/blog/:path*",
+      },
     ];
 
     return {

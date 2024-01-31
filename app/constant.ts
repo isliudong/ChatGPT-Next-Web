@@ -46,6 +46,7 @@ export enum StoreKey {
   Prompt = "prompt-store",
   Update = "chat-update",
   Sync = "sync",
+  User = "user",
 }
 
 export const DEFAULT_SIDEBAR_WIDTH = 300;

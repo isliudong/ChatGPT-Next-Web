@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// /api/cors AOP
+
 async function handle(
   req: NextRequest,
   { params }: { params: { path: string[] } },
@@ -8,8 +10,12 @@ async function handle(
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
 
+  // 从原始请求中提取查询字符串
+  const queryString = req.nextUrl.search;
+
   const [protocol, ...subpath] = params.path;
-  const targetUrl = `${protocol}://${subpath.join("/")}`;
+  console.log("path", params.path);
+  const targetUrl = `${protocol}://${subpath.join("/")}${queryString}`;
 
   const method = req.headers.get("method") ?? undefined;
   const shouldNotHaveBody = ["get", "head"].includes(
@@ -18,6 +24,7 @@ async function handle(
 
   const fetchOptions: RequestInit = {
     headers: {
+      "Content-Type": req.headers.get("Content-Type") ?? "application/json",
       authorization: req.headers.get("authorization") ?? "",
     },
     body: shouldNotHaveBody ? null : req.body,
@@ -29,6 +36,8 @@ async function handle(
   const fetchResult = await fetch(targetUrl, fetchOptions);
 
   console.log("[Any Proxy]", targetUrl, {
+    path: params,
+    headers: fetchResult.headers,
     status: fetchResult.status,
     statusText: fetchResult.statusText,
   });
@@ -38,6 +47,10 @@ async function handle(
 
 export const POST = handle;
 export const GET = handle;
+
+export const PUT = handle;
+export const DELETE = handle;
+
 export const OPTIONS = handle;
 
 export const runtime = "edge";

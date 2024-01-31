@@ -346,36 +346,40 @@ function SyncConfigModal(props: { onClose?: () => void }) {
             </select>
           </ListItem>
 
-          <ListItem
-            title={Locale.Settings.Sync.Config.Proxy.Title}
-            subTitle={Locale.Settings.Sync.Config.Proxy.SubTitle}
-          >
-            <input
-              type="checkbox"
-              checked={syncStore.useProxy}
-              onChange={(e) => {
-                syncStore.update(
-                  (config) => (config.useProxy = e.currentTarget.checked),
-                );
-              }}
-            ></input>
-          </ListItem>
-          {syncStore.useProxy ? (
-            <ListItem
-              title={Locale.Settings.Sync.Config.ProxyUrl.Title}
-              subTitle={Locale.Settings.Sync.Config.ProxyUrl.SubTitle}
-            >
-              <input
-                type="text"
-                value={syncStore.proxyUrl}
-                onChange={(e) => {
-                  syncStore.update(
-                    (config) => (config.proxyUrl = e.currentTarget.value),
-                  );
-                }}
-              ></input>
-            </ListItem>
-          ) : null}
+          {syncStore.provider !== ProviderType.ServerStash && (
+            <>
+              <ListItem
+                title={Locale.Settings.Sync.Config.Proxy.Title}
+                subTitle={Locale.Settings.Sync.Config.Proxy.SubTitle}
+              >
+                <input
+                  type="checkbox"
+                  checked={syncStore.useProxy}
+                  onChange={(e) => {
+                    syncStore.update(
+                      (config) => (config.useProxy = e.currentTarget.checked),
+                    );
+                  }}
+                ></input>
+              </ListItem>
+              {syncStore.useProxy ? (
+                <ListItem
+                  title={Locale.Settings.Sync.Config.ProxyUrl.Title}
+                  subTitle={Locale.Settings.Sync.Config.ProxyUrl.SubTitle}
+                >
+                  <input
+                    type="text"
+                    value={syncStore.proxyUrl}
+                    onChange={(e) => {
+                      syncStore.update(
+                        (config) => (config.proxyUrl = e.currentTarget.value),
+                      );
+                    }}
+                  ></input>
+                </ListItem>
+              ) : null}
+            </>
+          )}
         </List>
 
         {syncStore.provider === ProviderType.WebDAV && (
@@ -510,6 +514,7 @@ function SyncItems() {
                 setShowSyncConfigModal(true);
               }}
             />
+            {/*todo couldSync 登陆后实时刷新ui，以便显示同步按钮*/}
             {couldSync && (
               <IconButton
                 icon={<ResetIcon />}
@@ -807,7 +812,9 @@ export function Settings() {
               onChange={(e) =>
                 updateConfig(
                   (config) =>
-                    (config.messageDelay = Number.parseInt(e.currentTarget.value)),
+                    (config.messageDelay = Number.parseInt(
+                      e.currentTarget.value,
+                    )),
                 )
               }
             ></InputRange>
