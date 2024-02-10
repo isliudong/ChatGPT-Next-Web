@@ -1,3 +1,4 @@
+"use client";
 import {
   ApiPath,
   DEFAULT_API_HOST,
@@ -50,7 +51,9 @@ export class ChatGPTApi implements LLMApi {
       );
     }
     const isApp = !!getClientConfig()?.isApp;
-    let baseUrl = isApp ? DEFAULT_API_HOST : ApiPath.OpenAI;
+    let baseUrl = isApp
+      ? DEFAULT_API_HOST + "/proxy" + ApiPath.OpenAI
+      : ApiPath.OpenAI;
 
     if (accessStore.useCustomConfig) {
       baseUrl = isAzure ? accessStore.azureUrl : accessStore.openaiUrl;
@@ -69,6 +72,8 @@ export class ChatGPTApi implements LLMApi {
     }
     //console.log("[Base Url]", baseUrl);
     //console.log("[Path] ", path);
+
+    console.log("[Proxy Endpoint] ", baseUrl, path);
 
     return [baseUrl, path].join("/");
   }
