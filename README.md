@@ -91,7 +91,9 @@
     
   - 网络请求
     - [WebBrowser](https://api.js.langchain.com/classes/langchain_tools_webbrowser.WebBrowser.html)
+      - 需要使用 `text-embedding-ada-002` 嵌入模型
     - PDFBrowser
+      - 需要使用 `text-embedding-ada-002` 嵌入模型
       - ⚠ 仅在非 vercel 环境部署时可用 ⚠
   
   - 其它
@@ -106,13 +108,14 @@
       - StableDiffusion 插件需要配置对象存储服务，请参考 [对象存储服务配置指南](./docs/s3-oss.md) 配置
     - Arxiv
   
-- 支持 Gemini-Pro 模型（同步上游仓库并修改接口为流式传输）
+- 支持 gemini-pro, gemini-pro-vision 模型
   - 以下功能目前还不支持
     - **插件功能**
   - 如何启用
     - 配置密钥 `GOOGLE_API_KEY` ，key 可以在这里获取：https://ai.google.dev/tutorials/setup
     - 配置自定义接口地址（可选） `GOOGLE_BASE_URL`，可以使用我的这个项目搭建一个基于 vercel 的代理服务：[google-gemini-vercel-proxy](https://github.com/Hk-Gosuto/google-gemini-vercel-proxy)
   - 常见问题参考：[Gemini Prompting FAQs](https://js.langchain.com/docs/integrations/chat/google_generativeai#gemini-prompting-faqs)
+  - gemini-pro-vision 模型需要配置对象存储服务，请参考 [对象存储服务配置指南](./docs/s3-oss.md) 配置
   
 - 非 Vercel 运行环境下支持本地存储
 
