@@ -12,10 +12,14 @@ import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
 import {
   AgentChatOptions,
   ChatOptions,
+  CreateRAGStoreOptions,
   getHeaders,
   LLMApi,
   LLMModel,
   LLMUsage,
+  MultimodalContent,
+  SpeechOptions,
+  TranscriptionOptions,
 } from "../api";
 import Locale from "../../locales";
 import {
@@ -25,7 +29,11 @@ import {
 import { prettyObject } from "@/app/utils/format";
 import { getClientConfig } from "@/app/config/client";
 import { makeAzurePath } from "@/app/azure";
-import axios from "axios";
+import {
+  getMessageTextContent,
+  getMessageImages,
+  isVisionModel,
+} from "@/app/utils";
 import { MessageQueueManager } from "@/app/store/MessageQueueManager";
 
 export interface OpenAIListModelResponse {
@@ -82,50 +90,91 @@ export class ChatGPTApi implements LLMApi {
     return res.choices?.at(0)?.message?.content ?? "";
   }
 
-  async chat(options: ChatOptions) {
-    const messages: any[] = [];
-
-    const getImageBase64Data = async (url: string) => {
-      const response = await axios.get(url, { responseType: "arraybuffer" });
-      const base64 = Buffer.from(response.data, "binary").toString("base64");
-      return base64;
+  async speech(options: SpeechOptions): Promise<ArrayBuffer> {
+    const requestPayload = {
+      model: options.model,
+      input: options.input,
+      voice: options.voice,
+      response_format: options.response_format,
+      speed: options.speed,
     };
-    if (options.config.model === "gpt-4-vision-preview") {
-      for (const v of options.messages) {
-        let message: {
-          role: string;
-          content: {
-            type: string;
-            text?: string;
-            image_url?: { url: string };
-          }[];
-        } = {
-          role: v.role,
-          content: [],
-        };
-        message.content.push({
-          type: "text",
-          text: v.content,
-        });
-        if (v.image_url) {
-          var base64Data = await getImageBase64Data(v.image_url);
-          message.content.push({
-            type: "image_url",
-            image_url: {
-              url: `data:image/jpeg;base64,${base64Data}`,
-            },
-          });
-        }
-        messages.push(message);
-      }
-    } else {
-      options.messages.map((v) =>
-        messages.push({
-          role: v.role,
-          content: v.content,
-        }),
+
+    console.log("[Request] openai speech payload: ", requestPayload);
+
+    const controller = new AbortController();
+    options.onController?.(controller);
+
+    try {
+      const speechPath = this.path(OpenaiPath.SpeechPath, options.model);
+      const speechPayload = {
+        method: "POST",
+        body: JSON.stringify(requestPayload),
+        signal: controller.signal,
+        headers: getHeaders(),
+      };
+
+      // make a fetch request
+      const requestTimeoutId = setTimeout(
+        () => controller.abort(),
+        REQUEST_TIMEOUT_MS,
       );
+
+      const res = await fetch(speechPath, speechPayload);
+      clearTimeout(requestTimeoutId);
+      return await res.arrayBuffer();
+    } catch (e) {
+      console.log("[Request] failed to make a speech request", e);
+      throw e;
     }
+  }
+
+  async transcription(options: TranscriptionOptions): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", options.file, "audio.wav");
+    formData.append("model", options.model ?? "whisper-1");
+    if (options.language) formData.append("language", options.language);
+    if (options.prompt) formData.append("prompt", options.prompt);
+    if (options.response_format)
+      formData.append("response_format", options.response_format);
+    if (options.temperature)
+      formData.append("temperature", options.temperature.toString());
+
+    console.log("[Request] openai audio transcriptions payload: ", options);
+
+    const controller = new AbortController();
+    options.onController?.(controller);
+
+    try {
+      const path = this.path(OpenaiPath.TranscriptionPath, options.model);
+      const headers = getHeaders(true);
+      const payload = {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+        headers: headers,
+      };
+
+      // make a fetch request
+      const requestTimeoutId = setTimeout(
+        () => controller.abort(),
+        REQUEST_TIMEOUT_MS,
+      );
+      const res = await fetch(path, payload);
+      clearTimeout(requestTimeoutId);
+      const json = await res.json();
+      return json.text;
+    } catch (e) {
+      console.log("[Request] failed to make a audio transcriptions request", e);
+      throw e;
+    }
+  }
+
+  async chat(options: ChatOptions) {
+    const visionModel = isVisionModel(options.config.model);
+    const messages = options.messages.map((v) => ({
+      role: v.role,
+      content: visionModel ? v.content : getMessageTextContent(v),
+    }));
 
     const modelConfig = {
       ...useAppConfig.getState().modelConfig,
@@ -148,6 +197,16 @@ export class ChatGPTApi implements LLMApi {
       // max_tokens: Math.max(modelConfig.max_tokens, 1024),
       // Please do not ask me why not send max_tokens, no reason, this param is just shit, I dont want to explain anymore.
     };
+
+    // add max_tokens to vision model
+    if (visionModel) {
+      Object.defineProperty(requestPayload, "max_tokens", {
+        enumerable: true,
+        configurable: true,
+        writable: true,
+        value: modelConfig.max_tokens,
+      });
+    }
 
     console.log("[Request] openai payload: ", requestPayload);
 
@@ -183,6 +242,9 @@ export class ChatGPTApi implements LLMApi {
           if (finished || controller.signal.aborted) {
             responseText += remainText;
             console.log("[Response Animation] finished");
+            if (responseText?.length === 0) {
+              options.onError?.(new Error("empty response from server"));
+            }
             return;
           }
 
@@ -258,21 +320,33 @@ export class ChatGPTApi implements LLMApi {
             }
             const text = msg.data;
             try {
-              const json = JSON.parse(text) as {
-                choices: Array<{
-                  delta: {
-                    content: string;
-                  };
-                }>;
-              };
-              const delta = json.choices[0]?.delta?.content;
+              const json = JSON.parse(text);
+              const choices = json.choices as Array<{
+                delta: { content: string };
+              }>;
+              const delta = choices[0]?.delta?.content;
+              const textmoderation = json?.prompt_filter_results;
+
               if (delta) {
                 messageQueueManager.enqueue(() => {
                   remainText += delta;
                 });
               }
+
+              if (
+                textmoderation &&
+                textmoderation.length > 0 &&
+                ServiceProvider.Azure
+              ) {
+                const contentFilterResults =
+                  textmoderation[0]?.content_filter_results;
+                console.log(
+                  `[${ServiceProvider.Azure}] [Text Moderation] flagged categories result:`,
+                  contentFilterResults,
+                );
+              }
             } catch (e) {
-              console.error("[Request] parse error", text);
+              console.error("[Request] parse error", text, msg);
             }
           },
           onclose() {
@@ -298,10 +372,38 @@ export class ChatGPTApi implements LLMApi {
     }
   }
 
+  async createRAGStore(options: CreateRAGStoreOptions): Promise<void> {
+    try {
+      const accessStore = useAccessStore.getState();
+      const isAzure = accessStore.provider === ServiceProvider.Azure;
+      let baseUrl = isAzure ? accessStore.azureUrl : accessStore.openaiUrl;
+      const requestPayload = {
+        sessionId: options.chatSessionId,
+        fileInfos: options.fileInfos,
+        baseUrl: baseUrl,
+      };
+      console.log("[Request] rag store payload: ", requestPayload);
+      const controller = new AbortController();
+      options.onController?.(controller);
+      let path = "/api/langchain/rag/store";
+      const chatPayload = {
+        method: "POST",
+        body: JSON.stringify(requestPayload),
+        signal: controller.signal,
+        headers: getHeaders(),
+      };
+      const res = await fetch(path, chatPayload);
+      if (res.status !== 200) throw new Error(await res.text());
+    } catch (e) {
+      console.log("[Request] failed to make a chat reqeust", e);
+      options.onError?.(e as Error);
+    }
+  }
+
   async toolAgentChat(options: AgentChatOptions) {
     const messages = options.messages.map((v) => ({
       role: v.role,
-      content: v.content,
+      content: getMessageTextContent(v),
     }));
 
     const modelConfig = {
@@ -315,6 +417,7 @@ export class ChatGPTApi implements LLMApi {
     const isAzure = accessStore.provider === ServiceProvider.Azure;
     let baseUrl = isAzure ? accessStore.azureUrl : accessStore.openaiUrl;
     const requestPayload = {
+      chatSessionId: options.chatSessionId,
       messages,
       isAzure,
       azureApiVersion: accessStore.azureApiVersion,
