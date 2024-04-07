@@ -190,11 +190,9 @@ export function SideBar(props: { className?: string }) {
     >
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
         <div className={styles["sidebar-title"]} data-tauri-drag-region>
-          NextChat
+          Panghu Chat
         </div>
-        <div className={styles["sidebar-sub-title"]}>
-          Build your own AI assistant.
-        </div>
+        <div className={styles["sidebar-sub-title"]}></div>
         <div className={styles["sidebar-logo"] + " no-dark"}>
           <ChatGptIcon />
         </div>
@@ -220,8 +218,8 @@ export function SideBar(props: { className?: string }) {
             shouldNarrow
               ? undefined
               : userStore.isLogin()
-              ? userStore.username
-              : "登陆以同步"
+                ? userStore.username
+                : "登陆以同步"
           }
           className={styles["sidebar-bar-button"]}
           onClick={toggleLoginModal} // 添加点击事件处理函数来显示登录弹窗
