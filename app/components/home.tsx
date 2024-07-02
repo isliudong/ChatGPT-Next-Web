@@ -9,7 +9,7 @@ import styles from "./home.module.scss";
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 
-import { useMobileScreen } from "../utils";
+import { getClientApi, useMobileScreen } from "../utils";
 
 import dynamic from "next/dynamic";
 import { ModelProvider, Path, SlotID } from "../constant";
@@ -29,6 +29,7 @@ import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
 import { ClientApi } from "../client/api";
 import { useAccessStore } from "../store";
+import { identifyDefaultClaudeModel } from "../utils/checkers";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -177,12 +178,8 @@ function Screen() {
 export function useLoadData() {
   const config = useAppConfig();
 
-  var api: ClientApi;
-  if (config.modelConfig.model.startsWith("gemini")) {
-    api = new ClientApi(ModelProvider.GeminiPro);
-  } else {
-    api = new ClientApi(ModelProvider.GPT);
-  }
+  var api: ClientApi = getClientApi(config.modelConfig.model);
+
   useEffect(() => {
     (async () => {
       const models = await api.llm.models();

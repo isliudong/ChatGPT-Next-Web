@@ -1,5 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { STORAGE_KEY } from "../../../constant";
+import { STORAGE_KEY, internalAllowedWebDavEndpoints } from "../../../constant";
+import { getServerSideConfig } from "@/app/config/server";
+
+const config = getServerSideConfig();
+
+const mergedAllowedWebDavEndpoints = [
+  ...internalAllowedWebDavEndpoints,
+  ...config.allowedWebDevEndpoints,
+].filter((domain) => Boolean(domain.trim()));
+
+const normalizeUrl = (url: string) => {
+  try {
+    return new URL(url);
+  } catch (err) {
+    return null;
+  }
+};
+
 async function handle(
   req: NextRequest,
   { params }: { params: { path: string[] } },
@@ -14,7 +31,21 @@ async function handle(
   let endpoint = requestUrl.searchParams.get("endpoint");
 
   // Validate the endpoint to prevent potential SSRF attacks
-  if (!endpoint || !endpoint.startsWith("/")) {
+  if (
+    !endpoint ||
+    !mergedAllowedWebDavEndpoints.some((allowedEndpoint) => {
+      const normalizedAllowedEndpoint = normalizeUrl(allowedEndpoint);
+      const normalizedEndpoint = normalizeUrl(endpoint as string);
+
+      return (
+        normalizedEndpoint &&
+        normalizedEndpoint.hostname === normalizedAllowedEndpoint?.hostname &&
+        normalizedEndpoint.pathname.startsWith(
+          normalizedAllowedEndpoint.pathname,
+        )
+      );
+    })
+  ) {
     return NextResponse.json(
       {
         error: true,
@@ -25,8 +56,13 @@ async function handle(
       },
     );
   }
+
+  if (!endpoint?.endsWith("/")) {
+    endpoint += "/";
+  }
+
   const endpointPath = params.path.join("/");
-  const targetPath = `${endpoint}/${endpointPath}`;
+  const targetPath = `${endpoint}${endpointPath}`;
 
   // only allow MKCOL, GET, PUT
   if (req.method !== "MKCOL" && req.method !== "GET" && req.method !== "PUT") {
@@ -80,7 +116,7 @@ async function handle(
     );
   }
 
-  const targetUrl = `${endpoint}/${endpointPath}`;
+  const targetUrl = targetPath;
 
   const method = req.method;
   const shouldNotHaveBody = ["get", "head"].includes(
@@ -98,17 +134,28 @@ async function handle(
     duplex: "half",
   };
 
-  const fetchResult = await fetch(targetUrl, fetchOptions);
+  let fetchResult;
 
-  console.log("[Any Proxy]", targetUrl, {
-    status: fetchResult.status,
-    statusText: fetchResult.statusText,
-  });
+  try {
+    fetchResult = await fetch(targetUrl, fetchOptions);
+  } finally {
+    console.log(
+      "[Any Proxy]",
+      targetUrl,
+      {
+        method: req.method,
+      },
+      {
+        status: fetchResult?.status,
+        statusText: fetchResult?.statusText,
+      },
+    );
+  }
 
   return fetchResult;
 }
 
-export const POST = handle;
+export const PUT = handle;
 export const GET = handle;
 export const OPTIONS = handle;
 

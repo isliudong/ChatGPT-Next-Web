@@ -155,7 +155,8 @@ const pt: PartialLocaleType = {
     },
     MessageDelay: {
       Title: "Atraso da Mensagem",
-      SubTitle: "Atrasar a exibição da mensagem para aumentar o valor da pontuação",
+      SubTitle:
+        "Atrasar a exibição da mensagem para aumentar o valor da pontuação",
     },
     InjectSystemPrompts: {
       Title: "Inserir Prompts de Sistema",
@@ -318,6 +319,23 @@ const pt: PartialLocaleType = {
         ApiVerion: {
           Title: "Versão API Azure",
           SubTitle: "Verifique sua versão API do console Azure",
+        },
+      },
+      Anthropic: {
+        ApiKey: {
+          Title: "Chave API Anthropic",
+          SubTitle: "Verifique sua chave API do console Anthropic",
+          Placeholder: "Chave API Anthropic",
+        },
+
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Exemplo: ",
+        },
+
+        ApiVerion: {
+          Title: "Versão API (Versão api claude)",
+          SubTitle: "Verifique sua versão API do console Anthropic",
         },
       },
       CustomModel: {

@@ -1,5 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { ChatMessage, ModelType, useAppConfig, useChatStore } from "../store";
+import {
+  ChatMessage,
+  ModelType,
+  useAccessStore,
+  useAppConfig,
+  useChatStore,
+} from "../store";
 import Locale from "../locales";
 import styles from "./exporter.module.scss";
 import {
@@ -15,6 +21,7 @@ import { IconButton } from "./button";
 import {
   copyToClipboard,
   downloadAs,
+  getClientApi,
   getMessageImages,
   useMobileScreen,
 } from "../utils";
@@ -40,6 +47,7 @@ import { EXPORT_MESSAGE_CLASS_NAME, ModelProvider } from "../constant";
 import { getClientConfig } from "../config/client";
 import { ClientApi } from "../client/api";
 import { getMessageTextContent } from "../utils";
+import { identifyDefaultClaudeModel } from "../utils/checkers";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -312,12 +320,7 @@ export function PreviewActions(props: {
   const onRenderMsgs = (msgs: ChatMessage[]) => {
     setShouldExport(false);
 
-    var api: ClientApi;
-    if (config.modelConfig.model.startsWith("gemini")) {
-      api = new ClientApi(ModelProvider.GeminiPro);
-    } else {
-      api = new ClientApi(ModelProvider.GPT);
-    }
+    var api: ClientApi = getClientApi(config.modelConfig.model);
 
     api
       .share(msgs)

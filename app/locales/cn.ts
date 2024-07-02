@@ -331,6 +331,23 @@ const cn = {
           SubTitle: "选择指定的部分版本",
         },
       },
+      Anthropic: {
+        ApiKey: {
+          Title: "接口密钥",
+          SubTitle: "使用自定义 Anthropic Key 绕过密码访问限制",
+          Placeholder: "Anthropic API Key",
+        },
+
+        Endpoint: {
+          Title: "接口地址",
+          SubTitle: "样例：",
+        },
+
+        ApiVerion: {
+          Title: "接口版本 (claude api version)",
+          SubTitle: "选择一个特定的 API 版本输入",
+        },
+      },
       Google: {
         ApiKey: {
           Title: "API 密钥",
@@ -392,13 +409,14 @@ const cn = {
     TTS: {
       Enable: {
         Title: "启用文本转语音",
-        SubTitle: "启用基于 OpenAI 的文本生成语音服务",
+        SubTitle: "启用文本生成语音服务",
       },
       Autoplay: {
         Title: "启用自动朗读",
         SubTitle: "自动生成语音并播放，需先开启文本转语音开关",
       },
       Model: "模型",
+      Engine: "转换引擎",
       Voice: {
         Title: "声音",
         SubTitle: "生成语音时使用的声音",
