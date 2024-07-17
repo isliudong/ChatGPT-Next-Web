@@ -382,6 +382,11 @@
   }
 }
 
+
+.chat-message-focus {
+  border-color: rgb(136, 153, 232) !important;
+}
+
 .chat-message-user {
   display: flex;
   flex-direction: row-reverse;

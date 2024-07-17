@@ -838,10 +838,27 @@ function _Chat() {
           `${chatStore.selectedMessages[chatStore.currentMessageIndex].id}`,
         );
         if (messageElement) {
+          const contentElement = messageElement.querySelector(
+            `.${styles["chat-message-item"]}`,
+          ) as HTMLElement;
+
+          contentElement.classList.add(`${styles["chat-message-focus"]}`);
+          //三秒后移除
+
+          setTimeout(() => {
+            contentElement.classList.remove(`${styles["chat-message-focus"]}`);
+          }, 1000);
+
           // 计算消息元素相对于其父容器的偏移量
           const offsetTop = messageElement.offsetTop;
-          // 滚动到消息元素的位置
-          messagesContainer.scrollTop = offsetTop;
+          // 计算父容器的高度和消息元素的高度
+          const containerHeight = messagesContainer.clientHeight;
+          const elementHeight = messageElement.clientHeight;
+          // 计算滚动位置，使消息元素位于容器中间
+          const scrollPosition =
+            offsetTop - containerHeight / 2 + elementHeight / 2;
+          // 滚动到计算的位置
+          messagesContainer.scrollTop = scrollPosition;
         }
       }
     }
