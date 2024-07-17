@@ -826,6 +826,26 @@ function _Chat() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(measure, [userInput]);
+  useEffect(() => {
+    // 当 currentSessionChatIndex 改变时，滚动到对应的消息位置
+    if (chatStore.selectedMessages && chatStore.selectedMessages?.length > 0) {
+      const messagesContainer = scrollRef.current;
+      if (messagesContainer) {
+        if (chatStore.currentMessageIndex < 0) {
+          return;
+        }
+        const messageElement = document.getElementById(
+          `${chatStore.selectedMessages[chatStore.currentMessageIndex].id}`,
+        );
+        if (messageElement) {
+          // 计算消息元素相对于其父容器的偏移量
+          const offsetTop = messageElement.offsetTop;
+          // 滚动到消息元素的位置
+          messagesContainer.scrollTop = offsetTop;
+        }
+      }
+    }
+  }, [chatStore.messageClick]); // 增加 currentSessionChatIndex 作为依赖
 
   // chat commands shortcuts
   const chatCommands = useChatCommand({
@@ -1549,6 +1569,7 @@ function _Chat() {
           return (
             <Fragment key={message.id}>
               <div
+                id={message.id}
                 className={
                   isUser ? styles["chat-message-user"] : styles["chat-message"]
                 }

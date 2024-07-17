@@ -173,9 +173,20 @@ function fillTemplateWith(input: string, modelConfig: ModelConfig) {
   return output;
 }
 
-const DEFAULT_CHAT_STATE = {
+interface ChatState {
+  sessions: ChatSession[];
+  currentSessionIndex: number;
+  selectedMessages: ChatMessage[]; // 匹配的消息列表
+  currentMessageIndex: number; // 选中的消息
+  messageClick: number; // 选中的消息
+}
+
+const DEFAULT_CHAT_STATE: ChatState = {
   sessions: [createEmptySession()],
   currentSessionIndex: 0,
+  currentMessageIndex: -1,
+  selectedMessages: [],
+  messageClick: 0,
 };
 
 export const useChatStore = createPersistStore(
@@ -199,6 +210,23 @@ export const useChatStore = createPersistStore(
       selectSession(index: number) {
         set({
           currentSessionIndex: index,
+        });
+      },
+
+      messageClicked() {
+        const nextMessageIndex =
+          get().currentMessageIndex + 1 >= get().selectedMessages.length
+            ? 0
+            : get().currentMessageIndex + 1;
+        set({
+          messageClick: Math.random(),
+          currentMessageIndex: nextMessageIndex,
+        });
+      },
+
+      selectMessages(messages: ChatMessage[]) {
+        set({
+          selectedMessages: messages,
         });
       },
 

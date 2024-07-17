@@ -88,20 +88,27 @@ function SearchResultItem({
   input,
   selectSession,
   index,
+  message,
+  selectMessages,
+  messageClicked,
 }: {
   result: SearchResult;
   input: string;
   selectSession: (id: number) => void;
   index: number;
+  message: ChatMessage[];
+  selectMessages: (messages: ChatMessage[]) => void;
+  messageClicked: () => void;
 }) {
   const navigate = useNavigate();
-
   return (
     <div
       className={styles["search-result-item"]}
       onClick={() => {
         navigate(Path.Chat);
         selectSession(index);
+        selectMessages(message);
+        messageClicked();
       }}
     >
       <div className={styles["search-item-title"]}>{result.topic}</div>
@@ -130,10 +137,13 @@ function SearchBarComponent(
   { setIsSearching, className }: SearchBarProps,
   ref: Ref<SearchInputRef>,
 ) {
-  const [sessions, selectSession] = useChatStore((state) => [
-    state.sessions,
-    state.selectSession,
-  ]);
+  const [sessions, selectSession, selectMessages, messageClicked] =
+    useChatStore((state) => [
+      state.sessions,
+      state.selectSession,
+      state.selectMessages,
+      state.messageClicked,
+    ]);
 
   const [input, setInput] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -244,9 +254,12 @@ function SearchBarComponent(
             result={result}
             input={input}
             selectSession={selectSession}
+            selectMessages={selectMessages}
             index={sessions.findIndex(
               (session) => session.id === result.sessionId,
             )}
+            message={result.message}
+            messageClicked={messageClicked}
           />
         ))}
       </div>
